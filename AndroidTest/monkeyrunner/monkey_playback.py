@@ -54,15 +54,15 @@ def process_file(fp, device):
         CMD_MAP[cmd](device, rest)
 
 
-def main():
-    file = sys.argv[1]
-    fp = open(file, 'r')
-
-    device = MonkeyRunner.waitForConnection()
-    
+def dofile(fname, device):
+    fp = open(fname, 'r')
     process_file(fp, device)
     fp.close();
-    
+
+
+def main():
+    device = MonkeyRunner.waitForConnection()
+    dofile(sys.argv[1], device)
 
 if __name__ == '__main__':
     main()
