@@ -55,19 +55,28 @@ case_template = """
 def use_temp(summary, \
              action, \
              result, \
-             category = '--default--', \
+             category, \
+             plan_id=1, \
              pri="P3", \
-             product="TestProj", \
-             email="local@local.host", \
-             plan_id=1 \
+             product="UP812B", \
+             email="zhang.xiaojie@trigger.org"
              ):
     case = case_template % \
            (summary,pri,category,product,email,plan_id,action,result)
     return case
 
-def pick_up_case(values, fout):
+def pick_up_case(values, basepath, category="Release"):
     rr = re.compile('[\r\n]')
     length = len(values)
+
+    curout = ""
+    outpath = basepath
+    fout = None
+    
+    fname = basepath + ".xml"
+    fout = open(fname, 'wb')
+    fout.write(header.encode('utf-8'))
+
 
     for row in range(1,length):
         summary = values[row][0]
@@ -81,38 +90,49 @@ def pick_up_case(values, fout):
         if  summary == None \
            or action == None \
            or expect == None:
-            print("Null data: %d + 1" % row)
-            break
+            err_row = row + 1
+            print("-- %d --" % err_row)
+            if summary != None :
+                print("summary " + summary)
+            if action != None :
+                print("action " + action)
+            if expect != None :
+                print("expect " + expect)
+            print("=====")
+            continue
+
         summary = xml.sax.saxutils.escape(summary.strip())
         action = xml.sax.saxutils.escape(action.strip())
         expect = xml.sax.saxutils.escape(expect.strip())
-        action = rr.sub('<br>', action)
-        expect = rr.sub('<br>', expect)
-        fout.write(use_temp(summary,action,expect).encode('utf-8'))
-    pass
+        action = rr.sub("<br>\n", action)
+        expect = rr.sub("<br>\n", expect)
+        fout.write(use_temp(summary,action,expect,category, 5).encode('utf-8'))
 
+    fout.write(footer.encode('utf-8'))
+    fout.close()
 
 if __name__ == '__main__':
     cur_path=getcwd()
 
-    outpath = cur_path + sep + "all.xml"
-    fout = open(outpath, 'wb')
-    fout.write(header.encode('utf-8'))
-
-    fname = "Entry.xls"
-    sheet_name = 'Entry Test Case'
+    fname = "Stress.xls"
     filepath = cur_path + sep + fname
     
     #print("%s%s%s" % (header,case_template, footer))
     xlsApp = Dispatch("Excel.Application")
     xlsApp.Workbooks.Open(cur_path + sep + fname)
     xlsBook = xlsApp.Workbooks(fname)
-    allValue=xlsBook.Sheets[sheet_name].Range('A1:C700').Value
+    for i in range(500):
+        try:
+            sheet_name = xlsBook.Sheets[i].name
+            allValue=xlsBook.Sheets[sheet_name].Range('A1:C900').Value
+            category = sheet_name
+            outpath = cur_path + sep + "Stress" + sep + category
+            print(category)
+            pick_up_case(allValue, outpath, category)
+        except IndexError as e:
+            break
+
     # sheet.name
     # Sheets['sheet_name']
-    pick_up_case(allValue, fout)
     xlsBook.Close(SaveChanges = 0)
     del xlsApp
-
-
-    fout.write(footer.encode('utf-8'))
