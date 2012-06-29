@@ -2,13 +2,13 @@
 import sys
 
 CMD_MAP = {
-    'TOUCH': lambda arg: print("    device.touch(" + str(arg["x"])+","+str(arg["y"])
-                               +",\"" + arg["type"]+"\")"),
-    #'DRAG': lambda arg: print("device.drag(eval(\"" + str(arg) +"\"))"),
-    'PRESS': lambda arg: print("    device.press(\"" + arg["name"] + "\",\"" + arg["type"] + "\")"), 
-    'TYPE': lambda arg: print("    device.type(\"" + arg["message"] + "\")"),
-    'WAIT': lambda arg: print("    mr.sleep(" + str(arg["seconds"]) +")"),
-    'RUN'  : lambda arg: print("    device.startActivity(component='" + arg["component"] + "')"),
+    'TOUCH': lambda arg: sys.stdout.write("    device.touch(" + str(arg["x"])+","+str(arg["y"]) \
+                               +",\"" + arg["type"]+"\")\n"),
+    #'DRAG': lambda arg: sys.stdout.write("device.drag(eval(\"" + str(arg) +"\"))\n"),
+    'PRESS': lambda arg: sys.stdout.write("    device.press(\"" + arg["name"] + "\",\"" + arg["type"] + "\")\n"),
+    'TYPE': lambda arg: sys.stdout.write("    device.type(\"" + arg["message"] + "\")\n"),
+    'WAIT': lambda arg: sys.stdout.write("    mr.sleep(" + str(arg["seconds"]) +")\n"),
+    'RUN'  : lambda arg: sys.stdout.write("    device.startActivity(component='" + arg["component"] + "')\n"),
     }
 
 
