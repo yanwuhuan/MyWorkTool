@@ -15,6 +15,9 @@ CMD_MAP = {
 def parse_file(fname):
     fp = open(fname, 'r')
     for line in fp:
+        if line[0] == '#':
+            sys.stdout.write('    #Log:  ' + line[1:])
+            continue
         (cmd, rest) = line.split('|')
         try:
             # Parse the pydict
@@ -38,7 +41,7 @@ def main(fname="act.txt", cnt="1"):
     print("\ndevice = mr.waitForConnection()\n")
     print("mr.sleep(2.0)\n")
     print("for i in range(0,%s):" % cnt)
-    parse_file("act.txt")
+    parse_file(fname)
 
 if __name__ == '__main__':
     args = len(sys.argv)

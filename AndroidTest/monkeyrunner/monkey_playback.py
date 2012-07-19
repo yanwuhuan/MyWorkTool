@@ -40,6 +40,9 @@ CMD_MAP = {
 def process_file(fp, device):
     for line in fp:
         (cmd, rest) = line.split('|')
+        if line[0] == '#':
+            print('Log:  ' + line[1:]),
+            continue
         try:
             # Parse the pydict
             rest = eval(rest)
